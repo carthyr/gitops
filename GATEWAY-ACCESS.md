@@ -1,82 +1,112 @@
-# Guide d'accès aux applications Istio Gateway
+# Guide d'accès aux applications via Gateway API Kubernetes
 
 ## Configuration actuelle
 
-- **LoadBalancer IP**: 192.168.10.150
-- **Domaine**: intra.technovise.com
-- **Gateway**: intra-technovise-gateway (istio-ingress namespace)
+- **Gateway API**: v1.5.1 (experimental)
+- **LoadBalancer IP**: 192.168.10.151
+- **Domaine**: technovise.local  
+- **Gateway**: technovise-gateway (namespace: istio-ingress)
+- **GatewayClass**: istio (Istio implementation)
 
-## Problème réseau détecté
+## Architecture
 
-Votre Mac est sur le réseau **192.168.8.x** mais le LoadBalancer MetalLB distribue des IPs sur **192.168.10.150-160**.
+**Gateway API Kubernetes**  
+au lieu de l'ancienne API Istio `VirtualService`. Cette nouvelle architecture suit le standard Kubernetes et est plus portable.
 
-### Solutions possibles:
+### Ressources déployées:
 
-### Option 1: Ajuster le pool d'IPs MetalLB (Recommandé)
+1. **GatewayClass**: `istio` - Implémentation Istio du Gateway API
+2. **Gateway**: `technovise-gateway` - Point d'entrée HTTP/HTTPS
+3. **HTTPRoute**: Routes pour exposer les services (ex: httpbin)
+4. **Certificats**: Wildcard `*.technovise.local` (auto-signé)
 
-Modifiez le fichier `apps/metallb/config/ipaddresspool.yaml` pour utiliser le réseau 192.168.8.x :
+## Configuration DNS locale requise
 
-```yaml
-apiVersion: metallb.io/v1beta1
-kind: IPAddressPool
-metadata:
-  name: default-pool
-  namespace: metallb-system
-spec:
-  addresses:
-  # Utilisez une plage d'IPs disponibles sur votre réseau 192.168.8.x
-  - 192.168.8.240-192.168.8.250
+Ajoutez dans votre `/etc/hosts` (macOS/Linux) ou `C:\Windows\System32\drivers\etc\hosts` (Windows) :
+
+```
+192.168.10.151  httpbin.technovise.local
+192.168.10.151  technovise.local
 ```
 
-Puis appliquez la modification:
-```bash
-git add apps/metallb/config/ipaddresspool.yaml
-git commit -m "Update MetalLB IP pool to 192.168.8.x network"
-git push
-```
-
-### Option 2: Configuration DNS (après avoir résolu le réseau)
-
-Ajoutez à votre `/etc/hosts`:
-```
-192.168.10.150  httpbin.intra.technovise.com
-192.168.10.150  intra.technovise.com
-```
-
-Ou configurez votre DNS local (dnsmasq, etc).
-
-### Option 3: Tester avec NodePort (solution temporaire)
-
-```bash
-# Trouver le NodePort pour HTTP
-kubectl get svc -n istio-ingress istio-ingressgateway
-
-# Tester avec l'IP du noeud
-curl -H "Host: httpbin.intra.technovise.com" http://<IP_DU_NOEUD>:<NODEPORT>/get
-```
+Ou configurez votre DNS local.
 
 ## Applications déployées
 
 ### httpbin (demo)
-- URL: https://httpbin.intra.technovise.com
-- Namespace: demo-app
-- VirtualService: httpbin
+- **URL**: https://httpbin.technovise.local
+- **Namespace**: demo-app
+- **HTTPRoute**: httpbin (demo-app namespace)
 
 ## Tests
 
 ```bash
-# HTTP (redirige vers HTTPS)
-curl -v http://httpbin.intra.technovise.com/get
+# Vérifier le Gateway
+kubectl get gateway -n istio-ingress
 
-# HTTPS avec certificat auto-signé
-curl -k https://httpbin.intra.technovise.com/get
+# Vérifier les HTTPRoutes
+kubectl get httproute -A
+
+# Test HTTP (port 80)
+curl -v --resolve httpbin.technovise.local:80:192.168.10.151 http://httpbin.technovise.local/get
+
+# Test HTTPS avec certificat auto-signé (port 443)
+curl -k --resolve httpbin.technovise.local:443:192.168.10.151 https://httpbin.technovise.local/get
 
 # Vérifier les headers
-curl -k https://httpbin.intra.technovise.com/headers
+curl -k --resolve httpbin.technovise.local:443:192.168.10.151 https://httpbin.technovise.local/headers
 ```
 
 ## Ajouter une nouvelle application
 
-1. Créez un VirtualService dans `apps/istio-gateway/gateway-config/`
-2. Référencez le Gateway: `istio-ingress/intra-technovise-gateway`
-3. Le certificat wildcard `*.intra.technovise.com` est déjà configuré
+### Étape 1: Créer un HTTPRoute
+
+Créez un fichier dans `apps/gateway-api/`:
+
+```yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: mon-app
+  namespace: mon-namespace
+spec:
+  parentRefs:
+  - name: technovise-gateway
+    namespace: istio-ingress
+  hostnames:
+  - "mon-app.technovise.local"
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: mon-service
+      port: 8080
+```
+
+### Étape 2: Le certificat wildcard gérera automatiquement le TLS
+
+Le certificat `*.technovise.local` est déjà configuré et couvrira toutes vos applications.
+
+## Comparaison Istio Gateway vs Gateway API
+
+| Ancienne API Istio | Gateway API Kubernetes |
+|-------------------|------------------------|
+| `VirtualService` | `HTTPRoute` |
+| `Gateway (Istio)` | `Gateway (K8s)` |
+| - | `GatewayClass` |
+| API propriétaire Istio | Standard Kubernetes |
+
+## Avantages de Gateway API
+
+- ✅ **Standard Kubernetes**: Portable entre différents service meshes
+- ✅ **Plus expressif**: Support natif pour gRPC, TCP, TLS routes
+- ✅ **Role-based**: Séparation des responsabilités (infra vs app teams)
+- ✅ **Extensible**: Via policies et filtres
+- ✅ **Future-proof**: Direction officielle de Kubernetes
+
+## Ressources
+
+- [Gateway API Documentation](https://gateway-api.sigs.k8s.io/)
+- [Istio Gateway API Guide](https://istio.io/latest/docs/tasks/traffic-management/ingress/gateway-api/)
