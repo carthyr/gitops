@@ -1,0 +1,11 @@
+{
+  "appName": "cert-manager",
+  "userGivenName": "cert-manager",
+  "destNamespace": "cert-manager",
+  "destServer": "https://kubernetes.default.svc",
+  "srcPath": "apps/cert-manager/overlays/infra",
+  "srcRepoURL": "https://github.com/carthyr/gitops.git",
+  "srcTargetRevision": "",
+  "labels": null,
+  "annotations": null
+}
