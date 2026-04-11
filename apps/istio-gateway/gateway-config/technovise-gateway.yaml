@@ -1,0 +1,30 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: intra-technovise-gateway
+  namespace: istio-ingress
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  # HTTP - Redirect to HTTPS
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*.intra.technovise.com"
+    - "intra.technovise.com"
+    tls:
+      httpsRedirect: true
+  # HTTPS
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    hosts:
+    - "*.intra.technovise.com"
+    - "intra.technovise.com"
+    tls:
+      mode: SIMPLE
+      credentialName: intra-technovise-wildcard-tls

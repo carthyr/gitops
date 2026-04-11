@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: intra-technovise-wildcard-cert
+  namespace: istio-ingress
+spec:
+  secretName: intra-technovise-wildcard-tls
+  issuerRef:
+    name: ca-issuer
+    kind: ClusterIssuer
+  commonName: "*.intra.technovise.com"
+  dnsNames:
+  - "*.intra.technovise.com"
+  - "intra.technovise.com"
+  privateKey:
+    algorithm: RSA
+    size: 2048
