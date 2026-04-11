@@ -1,29 +1,25 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: istiod
+  name: istio
   namespace: argocd
   labels:
     app.kubernetes.io/managed-by: argocd-autopilot
-    app.kubernetes.io/name: istiod
+    app.kubernetes.io/name: istio
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: infra
   source:
-    repoURL: https://istio-release.storage.googleapis.com/charts
-    chart: istiod
-    targetRevision: 1.24.2
-    helm:
-      parameters:
-        - name: profile
-          value: "ambient"
+    repoURL: https://github.com/carthyr/gitops.git
+    targetRevision: main
+    path: apps/istio/components
   destination:
     server: https://kubernetes.default.svc
-    namespace: istio-system
+    namespace: argocd
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
-      - ServerSideApply=true
+      - CreateNamespace=true
