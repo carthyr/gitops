@@ -15,25 +15,23 @@ spec:
     chart: kiali-server
     targetRevision: 2.3.0
     helm:
-      parameters:
-        - name: auth.strategy
-          value: "anonymous"
-        - name: deployment.image_version
-          value: "v2.3.0"
-        - name: external_services.custom_dashboards.enabled
-          value: "true"
-        - name: external_services.prometheus.url
-          value: "http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090"
-        - name: external_services.grafana.enabled
-          value: "true"
-        - name: external_services.grafana.url
-          value: "http://kube-prometheus-stack-grafana.monitoring.svc.cluster.local:80"
-        - name: external_services.grafana.in_cluster_url
-          value: "http://kube-prometheus-stack-grafana.monitoring.svc.cluster.local:80"
-        - name: external_services.grafana.auth.username
-          value: "admin"
-        - name: external_services.grafana.auth.password
-          value: "admin123"
+      values: |
+        auth:
+          strategy: "anonymous"
+        deployment:
+          image_version: "v2.3.0"
+        external_services:
+          custom_dashboards:
+            enabled: true
+          prometheus:
+            url: "http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090"
+          grafana:
+            enabled: true
+            url: "http://kube-prometheus-stack-grafana.monitoring.svc.cluster.local:80"
+            in_cluster_url: "http://kube-prometheus-stack-grafana.monitoring.svc.cluster.local:80"
+            auth:
+              username: "admin"
+              password: "admin123"
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-system
