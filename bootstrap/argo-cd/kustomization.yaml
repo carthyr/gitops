@@ -3,4 +3,13 @@ kind: Kustomization
 
 resources:
   - install.yaml
-  - argocd-cmd-params-cm.yaml
+
+patchesStrategicMerge:
+  - |-
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: argocd-cmd-params-cm
+      namespace: argocd
+    data:
+      server.insecure: "true"
