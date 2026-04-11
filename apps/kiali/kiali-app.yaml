@@ -22,12 +22,31 @@ spec:
           value: "v2.3.0"
       values: |
         external_services:
+          custom_dashboards:
+            enabled: true
           prometheus:
             url: "http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090"
+            cache_enabled: true
+            cache_duration: 300
           grafana:
             enabled: true
+            auth:
+              type: "basic"
+              username: "admin"
+              password: "admin123"
             url: "http://kube-prometheus-stack-grafana.monitoring.svc.cluster.local:80"
             in_cluster_url: "http://kube-prometheus-stack-grafana.monitoring.svc.cluster.local:80"
+          istio:
+            component_status:
+              enabled: true
+              components:
+                - app_label: "istiod"
+                  is_core: true
+                  is_proxy: false
+                - app_label: "istio-ingressgateway"
+                  is_core: true
+                  is_proxy: true
+                  namespace: istio-ingress
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-system
