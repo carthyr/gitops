@@ -1,0 +1,9 @@
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: default-pool
+  namespace: metallb-system
+spec:
+  addresses:
+  # Range d'IPs disponibles pour les services LoadBalancer
+  - 192.168.10.150-192.168.10.160
