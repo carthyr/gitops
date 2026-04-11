@@ -12,7 +12,7 @@ metadata:
   namespace: cert-manager
 spec:
   isCA: true
-  commonName: intra-technovise-ca
+  commonName: technovise-local-ca
   secretName: selfsigned-ca-secret
   privateKey:
     algorithm: RSA

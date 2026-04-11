@@ -1,0 +1,29 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: technovise-gateway
+  namespace: istio-ingress
+spec:
+  gatewayClassName: istio
+  listeners:
+  # HTTP listener with redirect to HTTPS
+  - name: http
+    hostname: "*.technovise.local"
+    port: 80
+    protocol: HTTP
+    allowedRoutes:
+      namespaces:
+        from: All
+  # HTTPS listener with TLS
+  - name: https
+    hostname: "*.technovise.local"
+    port: 443
+    protocol: HTTPS
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - kind: Secret
+        name: technovise-wildcard-tls
+    allowedRoutes:
+      namespaces:
+        from: All
