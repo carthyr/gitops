@@ -1,22 +1,24 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: istio-gateway
+  name: gateway-api-crds
   namespace: argocd
   labels:
     app.kubernetes.io/managed-by: argocd-autopilot
-    app.kubernetes.io/name: istio-gateway
+    app.kubernetes.io/name: gateway-api-crds
   finalizers:
     - resources-finalizer.argocd.argoproj.io
+  annotations:
+    argocd.argoproj.io/sync-wave: "-5"  # Install CRDs early
 spec:
   project: infra
   source:
     repoURL: https://github.com/carthyr/gitops.git
     targetRevision: main
-    path: apps/istio-gateway/manifests
+    path: apps/gateway-api-crds
   destination:
     server: https://kubernetes.default.svc
-    namespace: istio-ingress
+    namespace: gateway-system
   syncPolicy:
     automated:
       prune: true
@@ -24,3 +26,10 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
+      - Replace=true  # Important for CRD updates
+    retry:
+      limit: 3
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
