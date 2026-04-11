@@ -26,6 +26,14 @@ spec:
       containers:
       - name: istio-proxy
         image: docker.io/istio/proxyv2:1.24.2
+        args:
+        - proxy
+        - router
+        - --domain
+        - $(POD_NAMESPACE).svc.cluster.local
+        - --proxyLogLevel=warning
+        - --proxyComponentLogLevel=misc:error
+        - --log_output_level=default:info
         ports:
         - containerPort: 15021
           protocol: TCP
