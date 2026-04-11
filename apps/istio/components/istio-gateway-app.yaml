@@ -16,10 +16,6 @@ spec:
     repoURL: https://istio-release.storage.googleapis.com/charts
     chart: gateway
     targetRevision: 1.24.2
-    helm:
-      values: |
-        service:
-          type: LoadBalancer
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-ingress
