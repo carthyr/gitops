@@ -54,9 +54,6 @@ spec:
             # Export metrics to Prometheus
             prometheus:
               endpoint: "0.0.0.0:8889"
-            # Export logs to Loki
-            loki:
-              endpoint: http://loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push
             # Debug exporter for testing
             debug:
               verbosity: detailed
@@ -71,10 +68,6 @@ spec:
                 receivers: [otlp, prometheus]
                 processors: [memory_limiter, batch]
                 exporters: [prometheus]
-              logs:
-                receivers: [otlp]
-                processors: [memory_limiter, batch]
-                exporters: [loki, debug]
         
         ports:
           otlp:
