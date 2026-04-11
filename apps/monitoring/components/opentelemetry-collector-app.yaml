@@ -21,7 +21,7 @@ spec:
       values: |
         # Image configuration (required in v0.150.0+)
         image:
-          repository: otel/opentelemetry-collector-k8s
+          repository: otel/opentelemetry-collector-contrib
         
         mode: deployment
         
