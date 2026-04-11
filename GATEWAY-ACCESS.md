@@ -25,18 +25,44 @@ au lieu de l'ancienne API Istio `VirtualService`. Cette nouvelle architecture su
 Ajoutez dans votre `/etc/hosts` (macOS/Linux) ou `C:\Windows\System32\drivers\etc\hosts` (Windows) :
 
 ```
-192.168.10.151  httpbin.technovise.local
 192.168.10.151  technovise.local
+192.168.10.151  httpbin.technovise.local
+192.168.10.151  argocd.technovise.local
+192.168.10.151  kiali.technovise.local
+192.168.10.151  grafana.technovise.local
+192.168.10.151  prometheus.technovise.local
+192.168.10.151  alertmanager.technovise.local
 ```
 
-Ou configurez votre DNS local.
+Ou configurez votre DNS local avec un wildcard pour `*.technovise.local → 192.168.10.151`
 
 ## Applications déployées
 
-### httpbin (demo)
-- **URL**: https://httpbin.technovise.local
-- **Namespace**: demo-app
-- **HTTPRoute**: httpbin (demo-app namespace)
+### Infrastructure:
+- **ArgoCD**: https://argocd.technovise.local
+  - Username: admin
+  - Password: eU8VbFAoOFBVMjPI
+  - HTTPRoute: `argocd` (namespace: argocd)
+
+### Observabilité:
+- **Kiali** (Istio Dashboard): https://kiali.technovise.local
+  - HTTPRoute: `kiali` (namespace: istio-system)
+
+### Monitoring:
+- **Grafana**: https://grafana.technovise.local
+  - Username: admin
+  - Password: admin123 ⚠️ (à changer en production)
+  - HTTPRoute: `grafana` (namespace: monitoring)
+
+- **Prometheus**: https://prometheus.technovise.local
+  - HTTPRoute: `prometheus` (namespace: monitoring)
+
+- **Alertmanager**: https://alertmanager.technovise.local
+  - HTTPRoute: `alertmanager` (namespace: monitoring)
+
+### Demo:
+- **httpbin**: https://httpbin.technovise.local
+  - HTTPRoute: `httpbin` (namespace: demo-app)
 
 ## Tests
 

@@ -11,7 +11,12 @@ Repository GitOps pour la gestion déclarative de l'infrastructure Kubernetes vi
 - **Load Balancer**: MetalLB v0.14.9
 - **Certificats**: cert-manager v1.15.3
 - **Progressive Delivery**: Argo Rollouts v2.38.2
-- **Observabilité**: Kiali v2.3.0
+- **Observabilité Mesh**: Kiali v2.3.0
+- **Monitoring**: 
+  - Prometheus (kube-prometheus-stack v68.2.2)
+  - Grafana (inclus dans kube-prometheus-stack)
+  - Loki v6.23.0 + Promtail v6.16.6
+  - OpenTelemetry Collector v0.115.2
 
 ## 🏗️ Architecture
 
@@ -70,7 +75,7 @@ Repository GitOps pour la gestion déclarative de l'infrastructure Kubernetes vi
 │   ├── gateway-api/               # Ressources Gateway API
 │   │   ├── gatewayclass.yaml      # Définition GatewayClass
 │   │   ├── gateway.yaml           # Gateway technovise-gateway
-│   │   ├── httproute-httpbin.yaml # Route httpbin
+│   │   ├── httproute-*.yaml       # HTTPRoutes (httpbin, argocd, kiali, grafana, prometheus, alertmanager)
 │   │   └── gateway-api-config-app.yaml
 │   ├── istio/                     # Service mesh Istio
 │   │   ├── components/            # istio-base, istiod, cni, ztunnel
@@ -80,9 +85,12 @@ Repository GitOps pour la gestion déclarative de l'infrastructure Kubernetes vi
 │   ├── kiali/                     # Observabilité Istio
 │   │   ├── components/
 │   │   └── kiali-app.yaml
-│   └── metallb/                   # Load balancer
-│       ├── components/            # MetalLB manifests
-│       └── config/                # IP pools et L2 advertisement
+│   ├── metallb/                   # Load balancer
+│   │   ├── components/            # MetalLB manifests
+│   │   └── config/                # IP pools et L2 advertisement
+│   └── monitoring/                # Stack de monitoring (app-of-apps)
+│       ├── components/            # Prometheus, Grafana, Loki, OpenTelemetry
+│       └── monitoring-app.yaml
 ├── bootstrap/                     # Bootstrap ArgoCD
 │   └── argo-cd.yaml
 ├── projects/                      # Projets ArgoCD
@@ -124,21 +132,31 @@ Ouvrir: https://localhost:8080
 
 ## 🌐 Applications déployées
 
-Total: **19 applications ArgoCD** (toutes Synced ✅)
+Total: **24 applications ArgoCD** 
 
 ### Infrastructure core:
-- argocd
-- cert-manager + cert-manager-config
-- metallb + metallb-config
-- istio (app-of-apps: istio-base, istiod, istio-cni, ztunnel)
-- **gateway-api-crds** ✨ CRDs Gateway API v1.5.1 (via GitOps)
-- gateway-api-config (ressources Gateway/HTTPRoute)
-- istio-gateway-config (applications de démo)
-- argo-rollouts + argo-rollouts-dashboard
-- kiali
+- **argocd** - GitOps controller (https://argocd.technovise.local)
+- **cert-manager** + cert-manager-config - Gestion TLS/certificats
+- **metallb** + metallb-config - Load balancer bare-metal
+- **istio** (app-of-apps) - Service mesh ambient mode
+  - istio-base, istiod, istio-cni, ztunnel
+- **gateway-api-crds** - CRDs Gateway API v1.5.1
+- **gateway-api-config** - Gateway et HTTPRoutes
+- **istio-gateway-config** - Configurations ingress
+- **argo-rollouts** + argo-rollouts-dashboard - Progressive delivery
+- **kiali** - Observabilité Istio (https://kiali.technovise.local)
+
+### Stack monitoring (app-of-apps):
+- **kube-prometheus-stack** - Prometheus + Grafana + Alertmanager
+  - Prometheus: https://prometheus.technovise.local
+  - Grafana: https://grafana.technovise.local (admin/admin123)
+  - Alertmanager: https://alertmanager.technovise.local
+- **loki** - Agrégation de logs
+- **promtail** - Collecteur de logs → Loki
+- **opentelemetry-collector** - Traces et métriques distribuées
 
 ### Applications demo:
-- httpbin (accessible via https://httpbin.technovise.local)
+- **httpbin** - Service de test (https://httpbin.technovise.local)
 
 ## 🔒 Sécurité et certificats
 
