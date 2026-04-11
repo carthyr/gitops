@@ -64,7 +64,10 @@ Repository GitOps pour la gestion déclarative de l'infrastructure Kubernetes vi
 │   │   └── cert-manager-app.yaml
 │   ├── cert-manager-config/       # Configuration cert-manager
 │   │   └── issuers/               # ClusterIssuers et certificats
-│   ├── gateway-api/               # Gateway API Kubernetes (NEW!)
+│   ├── gateway-api-crds/          # CRDs Gateway API Kubernetes (v1.5.1)
+│   │   ├── kustomization.yaml     # Installation CRDs via Kustomize
+│   │   └── gateway-api-crds-app.yaml
+│   ├── gateway-api/               # Ressources Gateway API
 │   │   ├── gatewayclass.yaml      # Définition GatewayClass
 │   │   ├── gateway.yaml           # Gateway technovise-gateway
 │   │   ├── httproute-httpbin.yaml # Route httpbin
@@ -72,8 +75,8 @@ Repository GitOps pour la gestion déclarative de l'infrastructure Kubernetes vi
 │   ├── istio/                     # Service mesh Istio
 │   │   ├── components/            # istio-base, istiod, cni, ztunnel
 │   │   └── istio-app.yaml
-│   ├── istio-gateway/             # Configuration ingress
-│   │   └── gateway-config/        # Demo apps
+│   ├── istio-gateway/             # Applications de démo
+│   │   └── gateway-config/        # Déploiements demo (httpbin)
 │   ├── kiali/                     # Observabilité Istio
 │   │   ├── components/
 │   │   └── kiali-app.yaml
@@ -121,15 +124,16 @@ Ouvrir: https://localhost:8080
 
 ## 🌐 Applications déployées
 
-Total: **18 applications ArgoCD** (toutes Synced ✅)
+Total: **19 applications ArgoCD** (toutes Synced ✅)
 
 ### Infrastructure core:
 - argocd
 - cert-manager + cert-manager-config
 - metallb + metallb-config
 - istio (app-of-apps: istio-base, istiod, istio-cni, ztunnel)
-- gateway-api-config (NEW!)
-- istio-gateway-config
+- **gateway-api-crds** ✨ CRDs Gateway API v1.5.1 (via GitOps)
+- gateway-api-config (ressources Gateway/HTTPRoute)
+- istio-gateway-config (applications de démo)
 - argo-rollouts + argo-rollouts-dashboard
 - kiali
 
@@ -329,8 +333,7 @@ kubectl label namespace my-namespace istio.io/dataplane-mode=ambient
 ### Load Balancer IPs:
 
 MetalLB distribue des IPs du pool **192.168.10.150-160**:
-- `192.168.10.150`: ~~istio-ingressgateway~~ (ancien, peut être supprimé)
-- `192.168.10.151`: **technovise-gateway-istio** (Gateway API actif)
+- `192.168.10.151`: **technovise-gateway-istio** (Gateway API - service automatiquement créé par Istio)
 
 ## 📚 Ressources
 
