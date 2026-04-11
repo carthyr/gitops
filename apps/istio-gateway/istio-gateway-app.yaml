@@ -3,8 +3,6 @@ kind: Application
 metadata:
   name: istio-gateway
   namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "4"
   labels:
     app.kubernetes.io/managed-by: argocd-autopilot
     app.kubernetes.io/name: istio-gateway
@@ -13,9 +11,9 @@ metadata:
 spec:
   project: infra
   source:
-    repoURL: https://istio-release.storage.googleapis.com/charts
-    chart: gateway
-    targetRevision: 1.24.2
+    repoURL: https://github.com/carthyr/gitops.git
+    targetRevision: main
+    path: apps/istio-gateway/manifests
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-ingress
