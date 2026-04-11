@@ -17,9 +17,9 @@ spec:
     chart: gateway
     targetRevision: 1.24.2
     helm:
-      parameters:
-        - name: service.type
-          value: "LoadBalancer"
+      values: |
+        service:
+          type: LoadBalancer
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-ingress
