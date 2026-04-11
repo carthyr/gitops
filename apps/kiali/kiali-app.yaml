@@ -20,33 +20,20 @@ spec:
           value: "anonymous"
         - name: deployment.image_version
           value: "v2.3.0"
-      values: |
-        external_services:
-          custom_dashboards:
-            enabled: true
-          prometheus:
-            url: "http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090"
-            cache_enabled: true
-            cache_duration: 300
-          grafana:
-            enabled: true
-            auth:
-              type: "basic"
-              username: "admin"
-              password: "admin123"
-            url: "http://kube-prometheus-stack-grafana.monitoring.svc.cluster.local:80"
-            in_cluster_url: "http://kube-prometheus-stack-grafana.monitoring.svc.cluster.local:80"
-          istio:
-            component_status:
-              enabled: true
-              components:
-                - app_label: "istiod"
-                  is_core: true
-                  is_proxy: false
-                - app_label: "istio-ingressgateway"
-                  is_core: true
-                  is_proxy: true
-                  namespace: istio-ingress
+        - name: external_services.custom_dashboards.enabled
+          value: "true"
+        - name: external_services.prometheus.url
+          value: "http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090"
+        - name: external_services.grafana.enabled
+          value: "true"
+        - name: external_services.grafana.url
+          value: "http://kube-prometheus-stack-grafana.monitoring.svc.cluster.local:80"
+        - name: external_services.grafana.in_cluster_url
+          value: "http://kube-prometheus-stack-grafana.monitoring.svc.cluster.local:80"
+        - name: external_services.grafana.auth.username
+          value: "admin"
+        - name: external_services.grafana.auth.password
+          value: "admin123"
   destination:
     server: https://kubernetes.default.svc
     namespace: istio-system
