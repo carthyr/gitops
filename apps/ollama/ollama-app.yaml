@@ -1,0 +1,88 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: ollama
+  namespace: argocd
+  labels:
+    app.kubernetes.io/managed-by: argocd-autopilot
+    app.kubernetes.io/name: ollama
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: infra
+  source:
+    repoURL: https://otwld.github.io/ollama-helm/
+    chart: ollama
+    targetRevision: 1.54.0
+    helm:
+      values: |
+        # Ollama configuration
+        ollama:
+          # GPU support (set to 1 if you have GPU, 0 otherwise)
+          gpu:
+            enabled: false
+            number: 0
+        
+        # Resources
+        resources:
+          requests:
+            cpu: 500m
+            memory: 2Gi
+          limits:
+            cpu: 2000m
+            memory: 8Gi
+        
+        # Persistence for models storage
+        persistentVolume:
+          enabled: true
+          size: 100Gi
+          storageClass: "microk8s-hostpath"
+          accessModes:
+            - ReadWriteOnce
+        
+        # Service configuration
+        service:
+          type: ClusterIP
+          port: 11434
+          annotations: {}
+        
+        # Ingress disabled (we'll use HTTPRoute)
+        ingress:
+          enabled: false
+        
+        # Security context
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+          fsGroup: 1000
+        
+        # Optionally pre-pull models on startup
+        # Uncomment to auto-download models
+        # extraEnv:
+        #   - name: OLLAMA_MODELS
+        #     value: "/root/.ollama/models"
+        # 
+        # initContainers:
+        #   - name: pull-models
+        #     image: ollama/ollama:0.19.0
+        #     command:
+        #       - /bin/sh
+        #       - -c
+        #       - |
+        #         ollama pull llama2
+        #         ollama pull codellama
+        #     volumeMounts:
+        #       - name: ollama-data
+        #         mountPath: /root/.ollama
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ollama
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
