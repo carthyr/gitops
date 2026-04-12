@@ -69,8 +69,8 @@ spec:
             capabilities:
               drop:
                 - ALL
-            runAsNonRoot: true
-            runAsUser: 10001
+            runAsUser: 0
+            runAsGroup: 0
             seccompProfile:
               type: RuntimeDefault
           env:
