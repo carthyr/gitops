@@ -16,21 +16,39 @@ spec:
     targetRevision: 1.54.0
     helm:
       values: |
-        # Ollama configuration
+        # Ollama configuration with Intel GPU support
         ollama:
-          # GPU support (set to 1 if you have GPU, 0 otherwise)
           gpu:
-            enabled: false
-            number: 0
+            enabled: true
+            type: "intel"
+            number: 1
         
-        # Resources
+        # Resources with GPU allocation
         resources:
           requests:
             cpu: 500m
-            memory: 2Gi
+            memory: 4Gi
           limits:
-            cpu: 2000m
-            memory: 8Gi
+            cpu: 4000m
+            memory: 16Gi
+            gpu.intel.com/i915: 1
+        
+        # Extra environment variables for Intel GPU
+        extraEnv:
+          - name: OLLAMA_INTEL_GPU
+            value: "1"
+          - name: OLLAMA_NUM_GPU
+            value: "1"
+        
+        # Mount Intel GPU devices
+        extraVolumes:
+          - name: dri-devices
+            hostPath:
+              path: /dev/dri
+        
+        extraVolumeMounts:
+          - name: dri-devices
+            mountPath: /dev/dri
         
         # Persistence for models storage
         persistentVolume:
@@ -50,30 +68,18 @@ spec:
         ingress:
           enabled: false
         
-        # Pod security context
+        # Pod security context (adjusted for GPU access)
         podSecurityContext:
-          runAsUser: 1000
-          runAsGroup: 1000
-          fsGroup: 1000
+          runAsUser: 0
+          runAsGroup: 0
+          fsGroup: 0
         
-        # Optionally pre-pull models on startup
-        # Uncomment to auto-download models
-        # extraEnv:
-        #   - name: OLLAMA_MODELS
-        #     value: "/root/.ollama/models"
-        # 
-        # initContainers:
-        #   - name: pull-models
-        #     image: ollama/ollama:0.19.0
-        #     command:
-        #       - /bin/sh
-        #       - -c
-        #       - |
-        #         ollama pull llama2
-        #         ollama pull codellama
-        #     volumeMounts:
-        #       - name: ollama-data
-        #         mountPath: /root/.ollama
+        # Container security context for privileged GPU access
+        containerSecurityContext:
+          privileged: true
+          capabilities:
+            add:
+              - SYS_ADMIN
   
   destination:
     server: https://kubernetes.default.svc
