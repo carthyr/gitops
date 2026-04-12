@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: intel-gpu-plugin
+  namespace: argocd
+  labels:
+    app.kubernetes.io/managed-by: argocd-autopilot
+    app.kubernetes.io/name: intel-gpu-plugin
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: infra
+  source:
+    repoURL: https://github.com/carthyr/gitops
+    targetRevision: main
+    path: apps/intel-gpu-plugin/manifests
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
