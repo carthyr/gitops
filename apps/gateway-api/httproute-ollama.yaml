@@ -6,7 +6,7 @@ metadata:
 spec:
   parentRefs:
     - name: technovise-gateway
-      namespace: gateway-api
+      namespace: istio-ingress
   hostnames:
     - "ollama.technovise.local"
   rules:
