@@ -106,18 +106,38 @@ spec:
           command: ["/bin/bash", "-c"]
           args:
             - |
-              # Install dependencies
-              apt-get update && apt-get install -y python3-pip git curl
-              pip3 install --upgrade pip
-              pip3 install openvino-genai optimum-intel[openvino] transformers pillow requests jupyter
+              set -e  # Exit on error
+              
+              # Wait for network to be ready
+              echo "⏳ Waiting for network..."
+              for i in {1..30}; do
+                if curl -s --connect-timeout 2 https://pypi.org > /dev/null 2>&1; then
+                  echo "✅ Network ready!"
+                  break
+                fi
+                echo "Retry $i/30..."
+                sleep 2
+              done
+              
+              # Install dependencies (system-wide as root)
+              echo "📦 Installing system packages..."
+              apt-get update && apt-get install -y python3-pip git curl wget
+              
+              echo "📦 Installing Python packages..."
+              pip3 install --no-cache-dir --upgrade pip
+              pip3 install --no-cache-dir openvino-genai optimum-intel[openvino] transformers pillow requests jupyter notebook
               
               # Download LLaVA model (INT8 quantized for GPU)
-              echo "📦 Downloading LLaVA model..."
-              optimum-cli export openvino \
-                --model llava-hf/llava-1.5-7b-hf \
-                --task image-text-to-text \
-                --weight-format int8 \
-                /models/llava-1.5-7b-hf
+              echo "📦 Downloading LLaVA model to /models/llava-1.5-7b-hf..."
+              if [ ! -d "/models/llava-1.5-7b-hf" ]; then
+                python3 -m optimum.exporters.openvino \
+                  --model llava-hf/llava-1.5-7b-hf \
+                  --task image-text-to-text \
+                  --weight-format int8 \
+                  /models/llava-1.5-7b-hf || echo "⚠️  Model download failed, will skip"
+              else
+                echo "✅ Model already exists, skipping download"
+              fi
               
               # Start Jupyter server
               echo "🚀 Starting Jupyter server on port 8888..."
@@ -159,6 +179,8 @@ spec:
               value: "2"
           securityContext:
             privileged: true
+            runAsUser: 0
+            runAsGroup: 0
       volumes:
         - name: models
           persistentVolumeClaim:
