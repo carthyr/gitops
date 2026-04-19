@@ -63,6 +63,8 @@ spec:
         - name: intel-gpu-plugin
           image: intel/intel-gpu-plugin:0.30.0
           imagePullPolicy: IfNotPresent
+          args:
+            - -shared-dev-num=5
           securityContext:
             readOnlyRootFilesystem: true
             allowPrivilegeEscalation: false

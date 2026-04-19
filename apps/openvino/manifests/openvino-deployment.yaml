@@ -21,7 +21,7 @@ data:
   llava-demo.py: |
     """
     OpenVINO LLaVA Multimodal Chatbot Demo
-    Running on CPU (GPU reserved for Ollama)
+    Running on Intel GPU (shared with Ollama)
     """
     import openvino as ov
     import openvino_genai as ov_genai
@@ -31,8 +31,8 @@ data:
     from io import BytesIO
     import os
     
-    # Configuration - CPU mode
-    DEVICE = os.environ.get("OPENVINO_DEVICE", "CPU")
+    # Configuration - Shared GPU mode
+    DEVICE = os.environ.get("OPENVINO_DEVICE", "GPU")
     MODEL_PATH = Path("/models/llava-1.5-7b-hf")
     
     def setup_openvino():
@@ -43,10 +43,10 @@ data:
         print(f"Using device: {DEVICE}")
         print("Available devices:", core.available_devices)
         
-        # CPU optimizations
+        # GPU optimizations
         config = {
             "PERFORMANCE_HINT": "LATENCY",
-            "NUM_STREAMS": "1"
+            "GPU_ENABLE_SDPA_OPTIMIZATION": "YES"
         }
         
         return core, config
@@ -79,7 +79,7 @@ data:
         image_url = "https://storage.openvinotoolkit.org/repositories/openvino_notebooks/data/data/image/coco.jpg"
         prompt = "What is unusual about this image?"
         
-        print("🚀 Running LLaVA on Intel GPU...")
+        print("🚀 Running LLaVA on Intel GPU (shared)...")
         response = run_llava_inference(image_url, prompt)
         print(f"\n📝 Response: {response}")
 ---
@@ -139,28 +139,26 @@ spec:
             requests:
               cpu: 2000m
               memory: 8Gi
+              gpu.intel.com/i915: 1
             limits:
               cpu: 6000m
               memory: 24Gi
-            # Note: GPU désactivé car déjà utilisé par Ollama
-            # Pour activer GPU: décommenter les lignes ci-dessous
-            # gpu.intel.com/i915: 1
+              gpu.intel.com/i915: 1
           volumeMounts:
             - name: models
               mountPath: /models
             - name: notebook
               mountPath: /workspace/llava-demo.py
               subPath: llava-demo.py
-            # Volume GPU désactivé (pas de GPU disponible)
-            # - name: dri-devices
-            #   mountPath: /dev/dri
+            - name: dri-devices
+              mountPath: /dev/dri
           env:
             - name: OPENVINO_DEVICE
-              value: "CPU"  # CPU mode (GPU utilisé par Ollama)
+              value: "GPU"  # Shared GPU mode
             - name: OPENVINO_LOG_LEVEL
               value: "2"
           securityContext:
-            privileged: false
+            privileged: true
       volumes:
         - name: models
           persistentVolumeClaim:
@@ -168,10 +166,9 @@ spec:
         - name: notebook
           configMap:
             name: openvino-notebook
-        # GPU volume désactivé
-        # - name: dri-devices
-        #   hostPath:
-        #     path: /dev/dri
+        - name: dri-devices
+          hostPath:
+            path: /dev/dri
 ---
 apiVersion: v1
 kind: Service
