@@ -16,22 +16,19 @@ spec:
     targetRevision: 3.1.8
     helm:
       values: |
-        # Open WebUI configuration for Ollama
         ollama:
           enabled: false
-          # Use external Ollama instance
-          urls:
-            - http://ollama.ollama.svc.cluster.local:11434
         
-        # Persistent storage for chat history and settings
+        ollamaUrls:
+          - http://ollama.ollama.svc.cluster.local:11434
+        
         persistence:
           enabled: true
           size: 10Gi
-          storageClass: "microk8s-hostpath"
+          storageClass: microk8s-hostpath
           accessModes:
             - ReadWriteOnce
         
-        # Resources
         resources:
           requests:
             cpu: 200m
@@ -40,27 +37,16 @@ spec:
             cpu: 1000m
             memory: 2Gi
         
-        # Service configuration
-        service:
-          type: ClusterIP
-          port: 8080
-          annotations: {}
-        
-        # Ingress disabled (we'll use HTTPRoute)
         ingress:
           enabled: false
         
-        # Environment variables
-        extraEnvVars:
+        env:
           - name: OLLAMA_BASE_URL
-            value: "http://ollama.ollama.svc.cluster.local:11434"
+            value: http://ollama.ollama.svc.cluster.local:11434
           - name: WEBUI_AUTH
             value: "true"
           - name: WEBUI_NAME
-            value: "Technovise Chat"
-        
-        # Replica count
-        replicaCount: 1
+            value: Technovise Chat
   
   destination:
     server: https://kubernetes.default.svc
