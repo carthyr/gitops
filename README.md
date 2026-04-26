@@ -158,6 +158,10 @@ Total: **24 applications ArgoCD**
 ### Applications demo:
 - **httpbin** - Service de test (https://httpbin.technovise.local)
 
+### Applications AI/ML:
+- **ollama** - Serveur de modèles LLM avec support GPU Intel (https://ollama.technovise.local)
+- **open-webui** - Interface web ChatBox pour Ollama (https://chat.technovise.local)
+
 ## 🔒 Sécurité et certificats
 
 ### Vérifier les certificats:
@@ -353,7 +357,16 @@ kubectl label namespace my-namespace istio.io/dataplane-mode=ambient
 MetalLB distribue des IPs du pool **192.168.10.150-160**:
 - `192.168.10.151`: **technovise-gateway-istio** (Gateway API - service automatiquement créé par Istio)
 
-## 📚 Ressources
+## � Guides de configuration
+
+Documentation détaillée disponible dans le dossier `docs/`:
+
+- **[GATEWAY-ACCESS.md](GATEWAY-ACCESS.md)** - Guide d'accès et configuration Gateway API
+- **[docs/GPU-SHARING-GUIDE.md](docs/GPU-SHARING-GUIDE.md)** - Partage GPU Intel avec DRA et GPU Plugin
+- **[docs/OPENVINO-GUIDE.md](docs/OPENVINO-GUIDE.md)** - Déploiement d'applications OpenVINO
+- **[docs/OLLAMA-OPENWEBUI-GUIDE.md](docs/OLLAMA-OPENWEBUI-GUIDE.md)** - Configuration Ollama + Open WebUI (ChatBox AI)
+
+## �📚 Ressources
 
 - [ArgoCD Documentation](https://argo-cd.readthedocs.io/)
 - [Gateway API Official Docs](https://gateway-api.sigs.k8s.io/)
