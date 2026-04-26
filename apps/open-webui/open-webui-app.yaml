@@ -13,7 +13,7 @@ spec:
   source:
     repoURL: https://helm.openwebui.com/
     chart: open-webui
-    targetRevision: 3.1.8
+    targetRevision: 3.4.1
     helm:
       values: |
         ollama:
@@ -22,31 +22,16 @@ spec:
         ollamaUrls:
           - http://ollama.ollama.svc.cluster.local:11434
         
+        pipelines:
+          enabled: false
+        
         persistence:
           enabled: true
           size: 10Gi
           storageClass: microk8s-hostpath
-          accessModes:
-            - ReadWriteOnce
-        
-        resources:
-          requests:
-            cpu: 200m
-            memory: 512Mi
-          limits:
-            cpu: 1000m
-            memory: 2Gi
         
         ingress:
           enabled: false
-        
-        env:
-          - name: OLLAMA_BASE_URL
-            value: http://ollama.ollama.svc.cluster.local:11434
-          - name: WEBUI_AUTH
-            value: "true"
-          - name: WEBUI_NAME
-            value: Technovise Chat
   
   destination:
     server: https://kubernetes.default.svc
