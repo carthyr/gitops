@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: litellm
+  namespace: argocd
+  labels:
+    app.kubernetes.io/managed-by: argocd-autopilot
+    app.kubernetes.io/name: litellm
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: infra
+  source:
+    repoURL: https://github.com/carthyr/gitops
+    targetRevision: main
+    path: apps/litellm/manifests
+  
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: litellm
+  
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
