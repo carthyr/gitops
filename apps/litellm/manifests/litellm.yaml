@@ -50,6 +50,9 @@ data:
     general_settings:
       master_key: "sk-1234"  # dummy key for single-user setup
       
+      # Disable auth for health checks
+      public_routes: ["/health", "/health/readiness", "/health/liveliness"]
+      
       # Logging
       json_logs: true
       
