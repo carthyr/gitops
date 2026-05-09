@@ -17,7 +17,7 @@ data:
       # Primary coding model - Qwen3.6-27B
       - model_name: qwen-coder
         litellm_params:
-          model: ollama/qwen3.6-coder:27b
+          model: ollama/qwen3.6:27b
           api_base: http://ollama.ollama.svc.cluster.local:11434
           stream: true
           timeout: 300
