@@ -14,18 +14,26 @@ data:
     # LiteLLM Proxy Configuration for Ollama Backend
     
     model_list:
-      # Primary coding model - Qwen3.6-27B
+      # Primary coding model - Qwen 7B (fits in available memory)
       - model_name: qwen-coder
         litellm_params:
-          model: ollama/qwen3.6:27b
+          model: ollama/qwen2.5-coder:7b
           api_base: http://ollama.ollama.svc.cluster.local:11434
           stream: true
           timeout: 300
       
-      # Alias with version for explicit calls
+      # Alias for explicit calls
       - model_name: qwen2.5-coder-7b
         litellm_params:
           model: ollama/qwen2.5-coder:7b
+          api_base: http://ollama.ollama.svc.cluster.local:11434
+          stream: true
+          timeout: 300
+      
+      # Larger model (requires 20.7 GiB RAM)
+      - model_name: qwen-coder-27b
+        litellm_params:
+          model: ollama/qwen3.6:27b
           api_base: http://ollama.ollama.svc.cluster.local:11434
           stream: true
           timeout: 300
