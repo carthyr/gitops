@@ -47,7 +47,7 @@ Qwen2.5-Coder:7B model (4.7GB GGUF)
   - `llama3.2` → `ollama/llama3.2:latest`
 
 ### 3. Continue.dev (VS Code Extension)
-- **Config**: `~/.continue/config.json`
+- **Config**: `~/.continue/config.yaml`
 - **Provider**: OpenAI-compatible (via LiteLLM)
 - **Primary Model**: Qwen-Coder
 - **Features**: Chat, autocomplete, code generation, refactoring
@@ -74,7 +74,7 @@ Keep this running in a terminal while using Continue.dev.
    - Search for "Continue"
    - Install "Continue - CodeLlama, GPT-4, etc."
 
-2. **Configuration is already set up** at `~/.continue/config.json`
+2. **Configuration is already set up** at `~/.continue/config.yaml`
 
 3. **Basic Commands**:
    - **Chat**: `Cmd/Ctrl+L` - Open chat sidebar
@@ -296,20 +296,15 @@ model_list:
 
 ### Continue.dev Settings
 
-Edit `~/.continue/config.json`:
+Edit `~/.continue/config.yaml`:
 
-```json
-{
-  "models": [
-    {
-      "completionOptions": {
-        "temperature": 0.2,  // Lower = more deterministic
-        "maxTokens": 2048,   // Max response length
-        "topP": 0.9          // Nucleus sampling
-      }
-    }
-  ]
-}
+```yaml
+models:
+  - name: Qwen-Coder
+    completionOptions:
+      temperature: 0.2  # Lower = more deterministic
+      maxTokens: 2048   # Max response length
+      topP: 0.9         # Nucleus sampling
 ```
 
 ---
@@ -365,13 +360,11 @@ To use `https://ai.technovise.local` instead of port-forward:
    192.168.10.151  ai.technovise.local
    ```
 
-2. **Update Continue.dev config**:
-   ```json
-   {
-     "models": [{
-       "apiBase": "https://ai.technovise.local/v1"
-     }]
-   }
+2. **Update Continue.dev config** (`~/.continue/config.yaml`):
+   ```yaml
+   models:
+     - name: Qwen-Coder
+       apiBase: https://ai.technovise.local/v1
    ```
 
 3. **Test**:
