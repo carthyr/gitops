@@ -64,6 +64,9 @@ spec:
         # No API keys required, works out of the box
         localEmbeddings:
           enabled: true
+          image:
+            repository: ghcr.io/huggingface/text-embeddings-inference
+            tag: "cpu-latest"
           model: "sentence-transformers/all-MiniLM-L6-v2"
           dimensions: 384
           resources:
