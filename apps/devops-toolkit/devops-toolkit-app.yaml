@@ -54,14 +54,30 @@ spec:
         # AI provider configuration
         ai:
           provider: anthropic
+          # Custom embeddings endpoint (Ollama)
+          customEndpoint:
+            embeddingsBaseURL: "http://ollama.ollama.svc.cluster.local:11434/v1"
+            embeddingsModel: "nomic-embed-text"
+            embeddingsDimensions: "768"
         
         # Qdrant vector database
         qdrant:
           enabled: true
         
-        # Local embeddings
+        # Local embeddings via Ollama (disabled built-in TEI)
         localEmbeddings:
-          enabled: true
+          enabled: false
+        
+        # Extra environment variables for embeddings
+        extraEnv:
+          - name: EMBEDDINGS_PROVIDER
+            value: "openai"  # Ollama uses OpenAI-compatible API
+          - name: EMBEDDINGS_BASE_URL
+            value: "http://ollama.ollama.svc.cluster.local:11434/v1"
+          - name: EMBEDDINGS_MODEL
+            value: "nomic-embed-text"
+          - name: EMBEDDINGS_DIMENSIONS
+            value: "768"
         
         # Web UI integration (for visualization URLs)
         webUI:
