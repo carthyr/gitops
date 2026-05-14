@@ -1,0 +1,19 @@
+apiVersion: dot-ai.devopstoolkit.live/v1alpha1
+kind: ResourceSyncConfig
+metadata:
+  name: default-sync
+  namespace: devops-toolkit
+spec:
+  # MCP endpoint for resource synchronization
+  mcpEndpoint: http://devops-toolkit-dot-ai.devops-toolkit.svc.cluster.local:3456/api/v1/resources/sync
+  
+  # Authentication secret (same as MCP server)
+  mcpAuthSecretRef:
+    name: dot-ai-secrets
+    key: auth-token
+  
+  # Batch changes for 10 seconds before syncing (reduces API calls)
+  debounceWindowSeconds: 10
+  
+  # Full resync every hour to catch any missed events
+  resyncIntervalMinutes: 60
