@@ -39,25 +39,24 @@ spec:
         # NOTE: Create the secret manually before deploying:
         # kubectl create secret generic dot-ai-secrets -n devops-toolkit \
         #   --from-literal=auth-token="$(openssl rand -base64 32)" \
-        #   --from-literal=anthropic-api-key="YOUR_ANTHROPIC_KEY" \
-        #   --from-literal=openai-api-key="YOUR_OPENAI_KEY"
+        #   --from-literal=custom-llm-api-key="ollama" \
+        #   --from-literal=custom-embeddings-api-key="local-embeddings-no-key-required"
         secrets:
           name: dot-ai-secrets
           # Leave these empty - values will come from the manually created secret
           auth:
             token: ""
-          anthropic:
-            apiKey: ""
-          openai:
+          customLlm:
             apiKey: ""
         
         # AI provider configuration - using local Ollama with qwen3.6:27b
-        # Note: Omit ai.provider completely when using custom endpoints
+        # Per official docs: set provider to "openai" for OpenAI-compatible endpoints like Ollama
         ai:
+          provider: openai
+          model: "qwen3.6:27b"
           customEndpoint:
             enabled: true
             baseURL: "http://ollama.ollama.svc.cluster.local:11434/v1"
-            model: "qwen3.6:27b"
         
         # Qdrant vector database
         qdrant:
