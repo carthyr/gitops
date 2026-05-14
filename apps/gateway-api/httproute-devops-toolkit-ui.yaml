@@ -15,5 +15,5 @@ spec:
         type: PathPrefix
         value: /
     backendRefs:
-    - name: devops-toolkit-ui
+    - name: devops-toolkit-ui-dot-ai-ui
       port: 3000
