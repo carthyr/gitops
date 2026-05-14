@@ -13,7 +13,7 @@ spec:
   source:
     repoURL: oci://ghcr.io/vfarcic/dot-ai/charts/dot-ai
     chart: dot-ai
-    targetRevision: 0.168.0
+    targetRevision: 1.19.1
     helm:
       valuesObject:
         # Deployment method
