@@ -68,9 +68,9 @@ spec:
         
         # Wire MCP server to the local-embeddings service deployed via manifest.
         # Mirrors what the chart would set when localEmbeddings.enabled=true.
+        # Note: CUSTOM_EMBEDDINGS_API_KEY is supplied by the chart via the
+        # dot-ai-secrets `custom-embeddings-api-key` key (managed manually).
         extraEnv:
-          - name: CUSTOM_EMBEDDINGS_API_KEY
-            value: "local-embeddings-no-key-required"
           - name: CUSTOM_EMBEDDINGS_BASE_URL
             value: "http://devops-toolkit-local-embeddings.devops-toolkit.svc.cluster.local:80/v1"
           - name: EMBEDDINGS_DIMENSIONS
