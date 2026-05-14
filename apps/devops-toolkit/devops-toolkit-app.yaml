@@ -63,6 +63,10 @@ spec:
         localEmbeddings:
           enabled: true
         
+        # Web UI integration (for visualization URLs)
+        webUI:
+          baseUrl: "https://devops-toolkit-ui.technovise.local"
+        
         # Resources
         resources:
           requests:

@@ -1,0 +1,12 @@
+# Ignore secrets
+*.secret.yaml
+secrets/
+*-secret.yaml
+.env
+.env.local
+
+# Ignore temporary files
+*.tmp
+*.swp
+*.bak
+*~
