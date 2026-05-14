@@ -52,9 +52,8 @@ spec:
             apiKey: ""
         
         # AI provider configuration - using local Ollama with qwen3.6:27b
-        # Note: Leave ai.provider empty to enable auto-detection for custom endpoints
+        # Note: Omit ai.provider completely when using custom endpoints
         ai:
-          provider: ""  # Empty to trigger custom endpoint auto-detection
           customEndpoint:
             enabled: true
             baseURL: "http://ollama.ollama.svc.cluster.local:11434/v1"
