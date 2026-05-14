@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: devops-toolkit-local-embeddings
+  namespace: argocd
+  labels:
+    app.kubernetes.io/managed-by: argocd-autopilot
+    app.kubernetes.io/name: devops-toolkit-local-embeddings
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: infra
+  source:
+    repoURL: https://github.com/carthyr/gitops.git
+    path: apps/devops-toolkit/manifests
+    targetRevision: main
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: devops-toolkit
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

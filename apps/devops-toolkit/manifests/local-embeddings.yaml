@@ -1,0 +1,82 @@
+---
+# Local Embeddings Service (HuggingFace TEI)
+# Provides zero-config semantic search for DevOps Toolkit
+# Model: sentence-transformers/all-MiniLM-L6-v2 (384 dimensions)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-toolkit-local-embeddings
+  namespace: devops-toolkit
+  labels:
+    app.kubernetes.io/name: local-embeddings
+    app.kubernetes.io/instance: devops-toolkit
+    app.kubernetes.io/component: local-embeddings
+    app.kubernetes.io/part-of: dot-ai
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: local-embeddings
+      app.kubernetes.io/instance: devops-toolkit
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: local-embeddings
+        app.kubernetes.io/instance: devops-toolkit
+    spec:
+      containers:
+        - name: local-embeddings
+          image: ghcr.io/huggingface/text-embeddings-inference:cpu-latest
+          imagePullPolicy: IfNotPresent
+          args:
+            - "--model-id"
+            - "sentence-transformers/all-MiniLM-L6-v2"
+            - "--port"
+            - "80"
+          ports:
+            - containerPort: 80
+              name: http
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            timeoutSeconds: 5
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "1"
+              memory: "512Mi"
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: devops-toolkit-local-embeddings
+  namespace: devops-toolkit
+  labels:
+    app.kubernetes.io/name: local-embeddings
+    app.kubernetes.io/instance: devops-toolkit
+    app.kubernetes.io/component: local-embeddings
+    app.kubernetes.io/part-of: dot-ai
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: local-embeddings
+    app.kubernetes.io/instance: devops-toolkit
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
