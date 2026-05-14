@@ -51,9 +51,13 @@ spec:
           openai:
             apiKey: ""
         
-        # AI provider configuration
+        # AI provider configuration - using local Ollama with qwen3.6:27b
         ai:
-          provider: anthropic
+          # Leave provider unset to use custom endpoint auto-detection
+          customEndpoint:
+            enabled: true
+            baseURL: "http://ollama.ollama.svc.cluster.local:11434/v1"
+            model: "qwen3.6:27b"
         
         # Qdrant vector database
         qdrant:
