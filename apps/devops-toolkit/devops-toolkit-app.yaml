@@ -49,11 +49,12 @@ spec:
           customLlm:
             apiKey: ""
         
-        # AI provider configuration - using local Ollama with qwen3.6:27b
+        # AI provider configuration - using local Ollama with qwen2.5-coder:14b
         # Per official docs: set provider to "openai" for OpenAI-compatible endpoints like Ollama
+        # Note: Switched from qwen3.6:27b (17 GB) to qwen2.5-coder:14b (9 GB) to fit in available memory (10.9 GB)
         ai:
           provider: openai
-          model: "qwen3.6:27b"
+          model: "qwen2.5-coder:14b"
           customEndpoint:
             enabled: true
             baseURL: "http://ollama.ollama.svc.cluster.local:11434/v1"
