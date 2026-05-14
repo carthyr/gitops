@@ -57,6 +57,8 @@ spec:
           customEndpoint:
             enabled: true
             baseURL: "http://ollama.ollama.svc.cluster.local:11434/v1"
+            embeddingsBaseURL: "http://devops-toolkit-local-embeddings.devops-toolkit.svc.cluster.local:80"
+            embeddingsDimensions: "384"
         
         # Qdrant vector database
         qdrant:
@@ -65,19 +67,9 @@ spec:
         # Local embeddings: deployed via separate manifest at
         # apps/devops-toolkit/manifests/local-embeddings.yaml
         # (Helm chart's localEmbeddings.enabled was not rendering reliably via ArgoCD;
-        # we manage the TEI Deployment/Service directly and inject the env vars below.)
+        # we manage the TEI Deployment/Service directly and configure via customEndpoint.embeddingsBaseURL above.)
         localEmbeddings:
           enabled: false
-        
-        # Wire MCP server to the local-embeddings service deployed via manifest.
-        # Mirrors what the chart would set when localEmbeddings.enabled=true.
-        # Note: CUSTOM_EMBEDDINGS_API_KEY is supplied by the chart via the
-        # dot-ai-secrets `custom-embeddings-api-key` key (managed manually).
-        extraEnv:
-          - name: CUSTOM_EMBEDDINGS_BASE_URL
-            value: "http://devops-toolkit-local-embeddings.devops-toolkit.svc.cluster.local:80/v1"
-          - name: EMBEDDINGS_DIMENSIONS
-            value: "384"
         
         # Web UI integration
         webUI:
