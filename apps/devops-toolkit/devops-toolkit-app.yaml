@@ -11,7 +11,7 @@ metadata:
 spec:
   project: infra
   source:
-    repoURL: https://ghcr.io/vfarcic/dot-ai/charts
+    repoURL: oci://ghcr.io/vfarcic/dot-ai/charts
     chart: dot-ai
     targetRevision: 0.168.0
     helm:
