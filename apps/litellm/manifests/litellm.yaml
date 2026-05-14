@@ -30,18 +30,10 @@ data:
           stream: true
           timeout: 300
       
-      # Larger model (requires 20.7 GiB RAM)
-      - model_name: qwen-coder-27b
+      # Larger model - 14B parameter version
+      - model_name: qwen-coder-14b
         litellm_params:
-          model: ollama/qwen3.6:27b
-          api_base: http://ollama.ollama.svc.cluster.local:11434
-          stream: true
-          timeout: 300
-      
-      # Smaller Qwen model if available
-      - model_name: qwen-coder-1.5b
-        litellm_params:
-          model: ollama/qwen2.5-coder:1.5b-base
+          model: ollama/qwen2.5-coder:14b
           api_base: http://ollama.ollama.svc.cluster.local:11434
           stream: true
           timeout: 300

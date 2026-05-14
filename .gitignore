@@ -1,0 +1,5 @@
+# Local configuration files
+.mcp.json
+
+# IDE and editor directories
+.continue/
